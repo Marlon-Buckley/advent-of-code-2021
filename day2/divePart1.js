@@ -23,3 +23,11 @@ lines.forEach((movement) => {
 })
 
 console.log("Answer: ", horizontalPos * depth);
+
+
+// Things that helped 
+  // https://stackoverflow.com/questions/30607419/return-only-numbers-from-string
+
+  // https://www.w3schools.com/jsref/jsref_includes.asp
+
+  // https://bobbyhadz.com/blog/javascript-split-string-by-newline
