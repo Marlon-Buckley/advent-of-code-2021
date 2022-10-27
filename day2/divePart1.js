@@ -14,8 +14,8 @@ lines.forEach((movement) => {
     const forwardMovement = movement.replace(/\D/g,'')
     horizontalPos += parseInt(forwardMovement);
   } else if (movement.includes("down")) {
-    const decendMovement = movement.replace(/\D/g,'')
-    depth += parseInt(decendMovement);
+    const descendMovement = movement.replace(/\D/g,'')
+    depth += parseInt(descendMovement);
   } else if (movement.includes("up")) {
     const ascendMovement = movement.replace(/\D/g,'');
     depth -= parseInt(ascendMovement);
