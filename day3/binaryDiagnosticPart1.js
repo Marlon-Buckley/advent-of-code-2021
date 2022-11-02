@@ -26,7 +26,9 @@ function columnsOfBits(input) {
 };
 
 //Found this solution here https://javascript.plainenglish.io/how-to-find-the-most-frequent-element-in-an-array-in-javascript-c85119dc78d2`
-function mostCommonBit(arr, type) {
+
+//Finds the most or least commmon bit in the given array
+function mostOrLeastCommonBit(arr, type) {
   const hashmap = arr.reduce( (acc, val) => {
    acc[val] = (acc[val] || 0 ) + 1
   //  console.log(acc);
@@ -39,14 +41,16 @@ function mostCommonBit(arr, type) {
   }
 }
 
+//Loops through each "column" from the puzzle input, calculates the gamma and epsilon rates
+//Then converts results to decimal and calculates power consumption
 function sorter(input) {
   const columns = columnsOfBits(input);
   let gammaRate = [];
   let epsilonRate = [];
 
   columns.forEach((column) => {
-    gammaRate += mostCommonBit(column, "gammaRate");
-    epsilonRate += mostCommonBit(column, "epsilonRate");
+    gammaRate += mostOrLeastCommonBit(column, "gammaRate");
+    epsilonRate += mostOrLeastCommonBit(column, "epsilonRate");
   });
 
   const powerConsumption = parseInt(gammaRate, 2) * parseInt(epsilonRate, 2);
