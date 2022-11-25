@@ -1,7 +1,7 @@
 // need to use input to calculate the gamma rate and epsilon rate
 const fs = require('fs');
 
-const puzzleInput = fs.readFileSync('./input.txt', 'utf8');
+const puzzleInput = fs.readFileSync('./example.txt', 'utf8');
 const lines = puzzleInput.split(/\n/);
 const test = [8, 7, 8, 8];
 
@@ -13,7 +13,7 @@ function columnPuller(input, colNumber) {
     column += line[colNumber];
   });
   return column;
-}
+};
 
 //returns an array where each element is an array of individual bits from each column
 function columnsOfBits(input) { 
@@ -54,6 +54,7 @@ function sorter(input) {
   });
 
   const powerConsumption = parseInt(gammaRate, 2) * parseInt(epsilonRate, 2);
+  console.log(columns);
   return ` Gammar rate: ${gammaRate}\n Epsilon rate: ${epsilonRate}\n Power consumption: ${powerConsumption}`;
 };
 
