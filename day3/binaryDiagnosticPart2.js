@@ -5,7 +5,7 @@ const puzzleInput = fs.readFileSync('./input.txt', 'utf8');
 const binaryNumbers = puzzleInput.split(/\n/);
 
 
-dominantBitInColumn = (binaryNumbers, columnNumber) => { //when using this in a loop binaryNumbers will change each time.
+dominantBitInColumn = (binaryNumbers, columnNumber) => {
   let onesInColumn = 0;
   let dominantBitInCol;
 
