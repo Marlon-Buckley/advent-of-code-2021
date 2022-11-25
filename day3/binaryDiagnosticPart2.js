@@ -76,26 +76,3 @@ const co2ScrubRrating  = ratingCalculator(binaryNumbers, 'co2');
 const lifeSupportRating = parseInt(oxygenGenRating, 2) * parseInt(co2ScrubRrating, 2);
 
 console.log(lifeSupportRating);
-
-// 00100
-// 11110
-// 10110
-// 10111
-// 10101
-// 01111
-// 00111
-// 11100
-// 10000
-// 11001
-// 00010
-// 01010
-
-// 00100
-// 01111
-// 00111
-// 00010
-// 01010
-
-// 00100
-// 00111
-// 00010
