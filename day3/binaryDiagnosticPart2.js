@@ -1,7 +1,7 @@
 // need to use input to calculate the gamma rate and epsilon rate
 const fs = require('fs');
 
-const puzzleInput = fs.readFileSync('./example.txt', 'utf8');
+const puzzleInput = fs.readFileSync('./input.txt', 'utf8');
 const binaryNumbers = puzzleInput.split(/\n/);
 
 
@@ -58,7 +58,4 @@ const co2ScrubRrating  = ratingCalculator(binaryNumbers, 'co2');
 
 const lifeSupportRating = parseInt(oxygenGenRating, 2) * parseInt(co2ScrubRrating, 2);
 
-//console.log(lifeSupportRating);
-
-console.log('oxygen rating: ', ratingCalculator(binaryNumbers, 'oxygen'));
-console.log('co2 rating: ', ratingCalculator(binaryNumbers, 'co2'));
+console.log(lifeSupportRating);
