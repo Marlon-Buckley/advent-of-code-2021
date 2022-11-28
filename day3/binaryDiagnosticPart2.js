@@ -1,4 +1,3 @@
-// need to use input to calculate the gamma rate and epsilon rate
 const fs = require('fs');
 
 const puzzleInput = fs.readFileSync('./input.txt', 'utf8');
