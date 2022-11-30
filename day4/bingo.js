@@ -1,5 +1,6 @@
+const { ifError } = require('assert');
 const fs = require('fs');
-const puzzleInput = fs.readFileSync('./example.txt', 'utf-8')
+const puzzleInput = fs.readFileSync('./input.txt', 'utf-8')
 
 //[13, 2, 9, 10, 12]  //bingoInput[0].split(',').map(str => {
   //return Number(str);
@@ -8,7 +9,7 @@ const puzzleInput = fs.readFileSync('./example.txt', 'utf-8')
 let rawBingoDraw = puzzleInput.split(/\r?\n/)[0];
 //pulls out each row as a string
 
-const bingoDraw2 = rawBingoDraw.split(',').map(str => {
+const mainBingoDraw = rawBingoDraw.split(',').map(str => {
   return Number(str);
 });
 
@@ -84,7 +85,7 @@ const rowOrColumnChecker = (bingoDraw, rowOrColumn) => {
   let matches = 0;
 
   rowOrColumn.forEach((number) => {
-    if (bingoDraw.includes(number) === true) {
+    if (bingoDraw.includes(number)) {
       matches++
     }
   })
@@ -92,16 +93,29 @@ const rowOrColumnChecker = (bingoDraw, rowOrColumn) => {
   return matches === 5 ? true : false;
 };
 
+const unmarkedValues = (currentBingoDraw, winningCard) => {
+  let unmarkedTotal = 0;
+  let unmarkedValues = [];
+  console.log("currentt draw", currentBingoDraw);
+  winningCard.forEach((row) => {
+    row.forEach((number) => {
+      if (currentBingoDraw.indexOf(number) === -1) {
+        unmarkedTotal = unmarkedTotal + number;
+      }
+    })
+  })
+  console.log("unmarkedd total", unmarkedValues);
+  return unmarkedTotal;
+};
+
 
 const playGame = (cards, numbersDrawn) => {
   let winningCard = [];
-  console.log(numbersDrawn);
-  //checks by row in each card
   
   for (let i = 0; i < cards.length; i++) { //check columns in card for win
     let workingCard = { card: cards[i], columns: columnPuller(cards[i])}
     workingCard.columns.forEach((column) => {
-      if (winningCard.length === 0) {
+      if (winningCard.card === undefined) {
         if (rowOrColumnChecker(column, numbersDrawn)) {
           console.log('won by column', column, 'in card\n', workingCard.card)
           workingCard.winningCol = column;
@@ -110,7 +124,7 @@ const playGame = (cards, numbersDrawn) => {
       }
     })
     workingCard.card.forEach((row) => { // check rows in card for win
-      if (winningCard.length === 0) {
+      if (winningCard.card === undefined) {
         if (rowOrColumnChecker(row, numbersDrawn)) {
           console.log('won by row', row, '\nin card; \n', workingCard.card);
           workingCard.winningRow = row;
@@ -119,10 +133,13 @@ const playGame = (cards, numbersDrawn) => {
       }
     })
   }
-  
-  return winningCard;
+
+  return winningCard ? winningCard : null;
 
 };
+
+//console.log(mainBingoDraw)
+
 
 // console.log(fileInput);
 // console.log(rawCardInput);
@@ -131,11 +148,38 @@ const playGame = (cards, numbersDrawn) => {
 
 const bingoCards = createBingoCards(sortedInputArray);
 
-const mockBingoDraw = [ 7,4,9,5,11,17,23,2,0,14,21,24,10 ];
+//console.log(mainBingoDraw.slice(0, 5))
+//console.log(mainBingoDraw)
+
+const gameLoop = (cards, draw) => {
+  let currentNumberDraw = draw.slice(0, 5);
+  let winner = {};
+  for (let i = 5; i < draw.slice(5).length; i++) { //this i = 5 might not be needed if this loops off diff value
+    let workingNumberDraw = currentNumberDraw
+    workingNumberDraw.push(draw[i]);
+    if (!winner?.card) {
+      let result = playGame(bingoCards, workingNumberDraw);
+      if (result?.card) {
+        winner = result;
+        winner.drawNumber = draw[i];
+        winner.sum = unmarkedValues(draw.slice(0, i + 1), winner.card) * draw[i];
+        console.log('**************', winner.card);
+      }
+    }
+    
+    
+    currentNumberDraw = workingNumberDraw
+  }
+  
+  return winner;
+};
+
+
+const mockBingoDraw = [ 7,4,9,5,11,17,23,2,0,14,21,24];
 const mockRowOrColumn = [ 14, 21, 17, 24, 4 ]
 
-
-console.log(playGame(bingoCards, mockBingoDraw))
+//console.log(playGame(bingoCards, mockBingoDraw));
+console.log(gameLoop(bingoCards, mainBingoDraw))
 
 //console.log(rowOrColumnChecker(mockBingoDraw, mockRowOrColumn));
 
