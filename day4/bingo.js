@@ -1,47 +1,228 @@
 const fs = require('fs');
+const puzzleInput = fs.readFileSync('./example.txt', 'utf-8')
 
-const puzzleInput = fs.readFileSync('./example.txt', 'utf8');
-const bingoInput = puzzleInput.split(/\n/);
-//const testBingoInput = bingoInput[0].split(',');
+//[13, 2, 9, 10, 12]  //bingoInput[0].split(',').map(str => {
+  //return Number(str);
+//});
 
-const cardData = bingoInput.slice(2).map(str => {
-  return str.replace(/\s+/g, ' ').trim();
+let rawBingoDraw = puzzleInput.split(/\r?\n/)[0];
+//pulls out each row as a string
+
+const bingoDraw2 = rawBingoDraw.split(',').map(str => {
+  return Number(str);
 });
-const sortedCards = cardData.filter(Boolean);
 
 
-const cardBuilder = (cards) => { //maps puzzle input to array of bingo cards
-  const totalCards = cards.length / 5;
-  let test = [];
-  let cardTracker = 0;
+//pulls out each row as a string
+let rawCardInput = puzzleInput.split(/\r?\n/).slice(2);
+
+//removes leading spaces from each string
+let sortedInputArray = rawCardInput.map(str => {
+  return str.replace(/\s+/g, ' ').trim()
+})
+
+
+//remove empty strings from array
+sortedInputArray = sortedInputArray.filter(e => e);
+
+const createBingoCards = (sortedInputArray) => {
+  const totalCards = sortedInputArray.length / 5;
+  let rowsAsInts = [];
+  let cardCount = 0;
   let cardSize = 5;
-  console.log('Total bingo cards :', totalCards);
-  console.log('Card raw data length: ', cards.length);
+  let groupedCards = [];
 
-
-  for (let i = 0; i < cards.length; i++) {
-    let row = cards[i].split(/[ ,]+/).join(',');
-    test.push(row.split(','));
-    test[i] = test[i].map(Number);
-
+  for (let i = 0; i < sortedInputArray.length; i++) {
+    let row = sortedInputArray[i].split(/[ ,]+/).join(','); //separates string of numbers with commas
+    rowsAsInts.push(row.split(',').map(Number)); //converts strings into ints and pushes to arr
   }
-  console.log(test);
-  return test;
-}
 
-cardBuilder(sortedCards);
+  //groups arrays into cards
+  for (let i = 0; i < totalCards; i++) {
+    groupedCards.push(rowsAsInts.slice(cardCount, cardCount + cardSize));
+    cardCount += 5
+  }
+
+  return groupedCards;
+};
+
+// const exampleCard =   [
+//   [ 22, 13, 17, 11, 0 ],
+//   [ 8, 2, 23, 4, 24 ],
+//   [ 21, 9, 14, 16, 7 ],
+//   [ 6, 10, 3, 18, 5 ],
+//   [ 1, 12, 20, 15, 19 ]
+// ]
+// [rowNumber][elementNumber]
+//console.log(exampleCard);
+
+//pull column
+//access element in x position of x row for a given card
+  //return all elements in x position of each row
+
+const columnPuller = (card) => {
+  let columns = [];
+  let workingColumn = [];
+  //loop through card and add values in order of columns
+  for (let i = 0; i < card.length; i++) {
+    for (let j = 0; j < card.length; j++) {
+      workingColumn.push(card[j][i]);
+      if (workingColumn.length === 5) {
+        columns.push(workingColumn)
+        workingColumn = [];
+      }
+    }
+  }
+
+  return columns;
+};
+
+//console.log(columnPuller(exampleCard));
+
+
+const rowOrColumnChecker = (bingoDraw, rowOrColumn) => {
+  let matches = 0;
+
+  rowOrColumn.forEach((number) => {
+    if (bingoDraw.includes(number) === true) {
+      matches++
+    }
+  })
+
+  return matches === 5 ? true : false;
+};
+
+
+const playGame = (cards, numbersDrawn) => {
+  let winningCard = [];
+  console.log(numbersDrawn);
+  //checks by row in each card
+  
+  for (let i = 0; i < cards.length; i++) { //check columns in card for win
+    let workingCard = { card: cards[i], columns: columnPuller(cards[i])}
+    workingCard.columns.forEach((column) => {
+      if (winningCard.length === 0) {
+        if (rowOrColumnChecker(column, numbersDrawn)) {
+          console.log('won by column', column, 'in card\n', workingCard.card)
+          workingCard.winningCol = column;
+          winningCard = workingCard;
+        }
+      }
+    })
+    workingCard.card.forEach((row) => { // check rows in card for win
+      if (winningCard.length === 0) {
+        if (rowOrColumnChecker(row, numbersDrawn)) {
+          console.log('won by row', row, '\nin card; \n', workingCard.card);
+          workingCard.winningRow = row;
+          winningCard = workingCard;
+        }
+      }
+    })
+  }
+  
+  return winningCard;
+
+};
+
+// console.log(fileInput);
+// console.log(rawCardInput);
+// console.log(sortedInputArray);
+
+
+const bingoCards = createBingoCards(sortedInputArray);
+
+const mockBingoDraw = [ 7,4,9,5,11,17,23,2,0,14,21,24,10 ];
+const mockRowOrColumn = [ 14, 21, 17, 24, 4 ]
+
+
+console.log(playGame(bingoCards, mockBingoDraw))
+
+//console.log(rowOrColumnChecker(mockBingoDraw, mockRowOrColumn));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const cardData = bingoInput.slice(2).map(str => {
+//   return str.replace(/\s+/g, ' ').trim();
+// });
+// const sortedCards = cardData.filter(Boolean);
+
+
+// const cardsBuilder = (cards) => { //maps puzzle input to array of bingo cards
+//   const totalCards = cards.length / 5;
+//   let rowsAsInts = [];
+//   console.log('Total bingo cards :', totalCards);
+//   console.log('Card raw data length: ', cards.length);
+
+//   //converts rows of strings to arrays of integers
+//   for (let i = 0; i < cards.length; i++) {
+//     let row = cards[i].split(/[ ,]+/).join(','); //separates string of numbers with commas
+//     rowsAsInts.push(row.split(',').map(Number)); //converts strings into ints and pushed to arr
+//   }
+
+//   let cardCount = 0;
+//   let groupedCards = [];
+//   let cardSize = 5;
+
+//   for (let i = 0; i < totalCards; i++) {
+//     groupedCards.push(rowsAsInts.slice(cardCount, cardCount + cardSize));
+//     cardCount += 5
+//   }
+
+//   return groupedCards;
+// }
+
+
+  //after first 5, for each number in the draw
+    //for each card
+      //for each row
+        //for each column
+          //compare all numbers in the draw
+
+
+
+//console.log(playGame(cardsBuilder(sortedCards), bingoDraw));
+
+
+
+
 
 
 //console.log(bingoCards(allCards));
 //console.log(sortedCards.slice(0, 5));
+// console.log(cardsBuilder(sortedCards));
+// console.log(bingoDraw);
+
+
+// 22 13 17 11  0  - 0
+//  8  2 23  4 24  - 5
+// 21  9 14 16  7  - 10
+//  6 10  3 18  5  - 15
+//  1 12 20 15 19  - 20
 
 
 
-
-
-// const bingoNumbers = testBingoInput.map(str => {
-//   return Number(str);
-// });
 
 // //this needs to know the winning number, to cut off the bingoNumbers at that point
 // const winningBoardScore = (winningBoard, winningNumber) => {
@@ -54,3 +235,27 @@ cardBuilder(sortedCards);
 //   return sum * winningNumber
 // };
 
+
+// const cardGrouper = (cards) => {
+//   const totalCards = cards.length / 5;
+//   const cardSize = 5;
+//   let cardCount = 0;
+//   let groupedCards = [];
+
+//   for (let i = 0; i < totalCards; i++) {
+//     groupedCards.push(cards.slice(cardCount, cardCount + cardSize));
+//     cardCount += 5
+//   }
+
+//   return groupedCards;
+// };
+
+//console.log(cardGrouper(cardsBuilder(sortedCards)));
+
+// const cardChecker = (card) => {
+
+//   for (let i = 0; i < card.length; i++) {
+//     console.log(card[i]);
+//   }
+
+// };
