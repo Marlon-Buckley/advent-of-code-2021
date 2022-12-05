@@ -1,4 +1,3 @@
-const { ifError } = require('assert');
 const fs = require('fs');
 const puzzleInput = fs.readFileSync('./input.txt', 'utf-8')
 
